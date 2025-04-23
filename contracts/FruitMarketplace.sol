@@ -45,6 +45,7 @@ contract FruitMarketplace {
         require(msg.sender == fruit.seller, "Not your listing");
         require(newPrice > 0, "Price must be positive and not 0");
         fruit.price = newPrice;
+        // Should I emit this event for the frontend, yes/no? emit FruitPriceUpdated(index, newPrice); ??
     }
 
     function getFruits() public view returns (Fruit[] memory){
