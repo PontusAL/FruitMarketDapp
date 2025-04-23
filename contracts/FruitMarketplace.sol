@@ -14,7 +14,7 @@ contract FruitMarketplace {
     function addFruit(string calldata name, uint256 price) public {
         // Calldata uses less gas than memory, but cannot be modified. 
         require(bytes(name).length > 0, "Name required");
-        require(price > 0, "Price must be positive");
+        require(price > 0, "Price must be positive and not 0");
 
         fruits.push(Fruit({
             name: name,
