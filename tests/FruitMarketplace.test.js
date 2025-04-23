@@ -1,6 +1,21 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
+describe("FruitMarketplace - Deployment", function () {
+    it("should deploy the contract successfully", async function () {
+      const Factory = await ethers.getContractFactory("FruitMarketplace");
+      const contract = await Factory.deploy();
+  
+      // Stop forgetting; Ethers v6: use .target instead of .address
+      const address = contract.target;
+  
+      expect(address).to.properAddress; // Basically the same functions as the isValidUUID() I implemented in GLO-3112
+      expect(address).to.not.equal("0x0000000000000000000000000000000000000000");
+    });
+  });
+
+
+
 describe("FruitMarketplace - adding fruit", function () {
 
     let contract;
