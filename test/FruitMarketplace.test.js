@@ -75,6 +75,11 @@ describe("FruitMarketplace - buying fruit", function () {
         await expect(
             contract.connect(buyer).buyFruit(0, { value: ethers.parseEther("0.5") })
         ).to.be.revertedWith("Insufficient funds");
+        
+        //Check that the fruit availability wasn't changed
+        const fruits = await contract.getFruits();
+        expect(fruits[0].available).to.be.true;
+
     });
 
     it("should fail if fruit is already sold", async () => {
