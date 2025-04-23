@@ -21,7 +21,7 @@ describe("FruitMarketplace - adding fruit", function () {
 
     beforeEach(async () => {
         // test env setup
-        seller = await ethers.getSigners();
+        [seller] = await ethers.getSigners();
         const Factory = await ethers.getContractFactory("FruitMarketplace");
         contract = await Factory.deploy();
     });
@@ -30,7 +30,7 @@ describe("FruitMarketplace - adding fruit", function () {
         // Given
         await contract.connect(seller).addFruit("Test fruit", ethers.parseEther("1"));
 
-        const fruits = await contract.getBooks();
+        const fruits = await contract.getFruits();
         // Assertions
         expect(fruits.length).to.equal(1);
         expect(fruits[0].name).to.equal("Test fruit");
