@@ -12,9 +12,7 @@ describe("FruitMarketplace - Deployment", function () {
       expect(address).to.properAddress; // Basically the same functions as the isValidUUID() I implemented in GLO-3112
       expect(address).to.not.equal("0x0000000000000000000000000000000000000000");
     });
-  });
-
-
+});
 
 describe("FruitMarketplace - adding fruit", function () {
 
@@ -23,7 +21,7 @@ describe("FruitMarketplace - adding fruit", function () {
 
     beforeEach(async () => {
         // test env setup
-        seller = await ethers.getSigners();
+        [seller] = await ethers.getSigners();
         const Factory = await ethers.getContractFactory("FruitMarketplace");
         contract = await Factory.deploy();
     });
@@ -32,7 +30,7 @@ describe("FruitMarketplace - adding fruit", function () {
         // Given
         await contract.connect(seller).addFruit("Test fruit", ethers.parseEther("1"));
 
-        const fruits = await contract.getBooks();
+        const fruits = await contract.getFruits();
         // Assertions
         expect(fruits.length).to.equal(1);
         expect(fruits[0].name).to.equal("Test fruit");
@@ -53,3 +51,37 @@ describe("FruitMarketplace - adding fruit", function () {
           ).to.be.revertedWith("Price must be positive and not 0");
     })
 })
+
+describe("FruitMarketplace - buying fruit", function () {
+    let contract;
+    let seller, buyer;
+
+    beforeEach(async () => {
+        [_, seller, buyer] = await ethers.getSigners();
+        const Factory = await ethers.getContractFactory("FruitMarketplace");
+        contract = await Factory.deploy();
+
+        await contract.connect(seller).addFruit("Mango", ethers.parseEther("1"));
+    });
+
+    it("should allow a buyer to purchase a fruit", async () => {
+        await contract.connect(buyer).buyFruit(0, { value: ethers.parseEther("1") });
+
+        const fruits = await contract.getFruits();
+        expect(fruits[0].available).to.be.false;
+    });
+
+    it("should fail if not enough ETH is sent", async () => {
+        await expect(
+            contract.connect(buyer).buyFruit(0, { value: ethers.parseEther("0.5") })
+        ).to.be.revertedWith("Insufficient funds");
+    });
+
+    it("should fail if fruit is already sold", async () => {
+        await contract.connect(buyer).buyFruit(0, { value: ethers.parseEther("1") });
+
+        await expect(
+            contract.connect(buyer).buyFruit(0, { value: ethers.parseEther("1") })
+        ).to.be.revertedWith("Fruit is not available");
+    });
+});
