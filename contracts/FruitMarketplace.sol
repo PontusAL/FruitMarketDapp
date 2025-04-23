@@ -38,6 +38,16 @@ contract FruitMarketplace {
         payable(fruit.seller).transfer(fruit.price);
     }
 
+    function setFruitPrice(uint256 index, uint256 newPrice) external {
+        require(index < fruits.length, "Invalid fruit index");
+        Fruit storage fruit = fruits[index];
+        require(fruit.available, "Fruit is not available"); // Makes no sense to update price of an already sold item
+        require(msg.sender == fruit.seller, "Not your listing");
+        require(newPrice > 0, "Price must be positive and not 0");
+        fruit.price = newPrice;
+        // Should I emit this event for the frontend, yes/no? emit FruitPriceUpdated(index, newPrice); ??
+    }
+
     function getFruits() public view returns (Fruit[] memory){
         // Should this be public ?
         return fruits;

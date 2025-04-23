@@ -16,3 +16,7 @@ when opening the project, run
 source .devrc
 ```
 to temporarily "install" the suite of commands. This will clean, compile, run tests and deploy (in that order) when entering `npxverify` in the terminal. It is hardcoded in `verify.sh`
+
+
+### Solidity reminder
+If you ever forget what you're doing. [Check this](https://www.youtube.com/watch?v=kdvVwGrV7ec&t=82s)
