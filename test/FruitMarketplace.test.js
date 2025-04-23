@@ -85,3 +85,44 @@ describe("FruitMarketplace - buying fruit", function () {
         ).to.be.revertedWith("Fruit is not available");
     });
 });
+
+
+describe("FruitMarketplace - updating fruit price", function () {
+    let contract;
+    let seller, rando;
+
+    beforeEach(async () => {
+        [_, seller, rando] = await ethers.getSigners();
+        const Factory = await ethers.getContractFactory("FruitMarketplace");
+        contract = await Factory.deploy();
+
+        await contract.connect(seller).addFruit("Mango", ethers.parseEther("1"));
+    });
+
+    it("should allow a seller to update the price of a fruit", async () => {
+        await contract.connect(seller).setFruitPrice(0, ethers.parseEther("2"));
+
+        const fruits = await contract.getFruits();
+        expect(fruits[0].price).to.equal(ethers.parseEther("2"));
+    });
+
+    it("should fail if fruit is already sold", async () => {
+        await contract.connect(rando).buyFruit(0, { value: ethers.parseEther("1") });
+
+        await expect(
+            contract.connect(seller).setFruitPrice(0, ethers.parseEther("5"))
+        ).to.be.revertedWith("Fruit is not available");
+    });
+
+    it("should fail if not seller", async () => {
+        await expect(
+            contract.connect(rando).setFruitPrice(0, ethers.parseEther("5"))
+        ).to.be.revertedWith("Not your listing");
+    });
+
+    it("should not allow to remove price", async function () {
+        await expect(
+            contract.connect(seller).setFruitPrice(0, 0)
+          ).to.be.revertedWith("Price must be positive and not 0");
+    })
+});
