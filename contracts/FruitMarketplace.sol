@@ -15,6 +15,8 @@ contract FruitMarketplace {
     mapping(address => uint256) public ratingCount;
     mapping(address => mapping(uint256 => bool)) public hasRated;
 
+    event FruitPriceUpdated(uint256 indexed index, uint256 newPrice); // Emit event to frontend
+
     function addFruit(string calldata name, uint256 price) public {
         // Calldata uses less gas than memory, but cannot be modified. 
         require(bytes(name).length > 0, "Name required");
@@ -49,7 +51,7 @@ contract FruitMarketplace {
         require(msg.sender == fruit.seller, "Not your listing");
         require(newPrice > 0, "Price must be positive and not 0");
         fruit.price = newPrice;
-        // Should I emit this event for the frontend, yes/no? emit FruitPriceUpdated(index, newPrice); ??
+        emit FruitPriceUpdated(index, newPrice); // Emit event to frontend for handling
     }
 
     function rateSeller(uint256 index, uint8 grade) external {
@@ -63,12 +65,12 @@ contract FruitMarketplace {
     }
 
     function getAverageRating(address seller) public view returns (uint256) {
+        // Rounds down to closest integer though
         if (ratingCount[seller] == 0) return 0;
         return ratingTotal[seller] / ratingCount[seller];
     }
 
     function getFruits() public view returns (Fruit[] memory){
-        // Should this be public or external ?
         return fruits;
     }
 
