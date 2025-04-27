@@ -221,44 +221,43 @@ function App() {
 
           <h2 className="text-center mt-5">Marketplace - Sold Fruits</h2>
           <div className="row">
-            {fruits
-              .filter(fruit => fruit.buyer !== "0x0000000000000000000000000000000000000000")
-              .map((fruit, index) => (
-                <div key={index} className="col-md-6 mb-4">
-                  <div className="card h-100 bg-light">
-                    <div className="card-body">
-                      <h5 className="card-title">{fruit.name}</h5>
-                      <p className="card-text">
-                        <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
-                        <strong>Seller:</strong> {fruit.seller}<br />
-                        <strong>Buyer:</strong> {fruit.buyer}
-                      </p>
-                      <span className="badge bg-secondary">Sold</span>
-
-                      {account && account.toLowerCase() === fruit.buyer.toLowerCase() && (
-                        <form onSubmit={(e) => handleRateSeller(e, index)} className="mt-2">
-                          <div className="input-group">
-                            <select
-                              className="form-select"
-                              value={ratings[index] || ""}
-                              onChange={(e) => setRatings({ ...ratings, [index]: e.target.value })}
-                            >
-                              <option value="">Rate Seller</option>
-                              <option value="1">1 ⭐</option>
-                              <option value="2">2 ⭐⭐</option>
-                              <option value="3">3 ⭐⭐⭐</option>
-                              <option value="4">4 ⭐⭐⭐⭐</option>
-                              <option value="5">5 ⭐⭐⭐⭐⭐</option>
-                            </select>
-                            <button className="btn btn-primary" type="submit">Submit</button>
-                          </div>
-                        </form>
-                      )}
-
-                    </div>
+          {fruits
+            .map((fruit, realIndex) => ({ fruit, realIndex })) // decorate first
+            .filter(({ fruit }) => fruit.buyer !== "0x0000000000000000000000000000000000000000") // filter sold fruits
+            .map(({ fruit, realIndex }) => (
+              <div key={realIndex} className="col-md-6 mb-4">
+                <div className="card h-100 bg-light">
+                  <div className="card-body">
+                    <h5 className="card-title">{fruit.name}</h5>
+                    <p className="card-text">
+                      <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
+                      <strong>Seller:</strong> {fruit.seller}<br />
+                      <strong>Buyer:</strong> {fruit.buyer}
+                    </p>
+                    <span className="badge bg-secondary">Sold</span>
+                    {account && account.toLowerCase() === fruit.buyer.toLowerCase() && (
+                      <form onSubmit={(e) => handleRateSeller(e, realIndex)} className="mt-2">
+                        <div className="input-group">
+                          <select
+                            className="form-select"
+                            value={ratings[realIndex] || ""}
+                            onChange={(e) => setRatings({ ...ratings, [realIndex]: e.target.value })}
+                          >
+                            <option value="">Rate Seller</option>
+                            <option value="1">1 ⭐</option>
+                            <option value="2">2 ⭐⭐</option>
+                            <option value="3">3 ⭐⭐⭐</option>
+                            <option value="4">4 ⭐⭐⭐⭐</option>
+                            <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                          </select>
+                          <button className="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </div>
-              ))}
+              </div>
+          ))}
           </div>
         </section>
       </div>
