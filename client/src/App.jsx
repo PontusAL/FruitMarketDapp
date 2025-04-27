@@ -72,8 +72,7 @@ function App() {
         width: "100%", 
         maxWidth: "800px", 
         backgroundColor: "#d4edda",
-        borderLeft: "10px solid #a4c2a8",
-        borderRight: "10px solid #a4c2a8",
+        border: "10px solid #a4c2a8",
         padding: "2rem",
         borderRadius: "8px",
       }}>
@@ -109,27 +108,45 @@ function App() {
         </section>
 
         <section>
-          <h2 className="text-center">Marketplace</h2>
+          <h2 className="text-center">Marketplace - Available Fruits</h2>
           <div className="row">
-            {fruits.map((fruit, index) => (
-              <div key={index} className="col-md-6 mb-4">
-                <div className="card h-100">
-                  <div className="card-body">
-                    <h5 className="card-title">{fruit.name}</h5>
-                    <p className="card-text">
-                      <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
-                      <strong>Seller:</strong> {fruit.seller}<br />
-                      <strong>Status:</strong>{" "}
-                      {fruit.buyer === "0x0000000000000000000000000000000000000000" ? (
-                        <button className="btn btn-success mt-2" onClick={() => buyFruit(index, fruit.price)}>Buy</button>
-                      ) : (
-                        "Sold"
-                      )}
-                    </p>
+            {fruits
+              .filter(fruit => fruit.buyer === "0x0000000000000000000000000000000000000000")
+              .map((fruit, index) => (
+                <div key={index} className="col-md-6 mb-4">
+                  <div className="card h-100">
+                    <div className="card-body">
+                      <h5 className="card-title">{fruit.name}</h5>
+                      <p className="card-text">
+                        <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
+                        <strong>Seller:</strong> {fruit.seller}<br />
+                      </p>
+                      <button className="btn btn-success mt-2" onClick={() => buyFruit(index, fruit.price)}>Buy</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
+
+          <h2 className="text-center mt-5">Marketplace - Sold Fruits</h2>
+          <div className="row">
+            {fruits
+              .filter(fruit => fruit.buyer !== "0x0000000000000000000000000000000000000000")
+              .map((fruit, index) => (
+                <div key={index} className="col-md-6 mb-4">
+                  <div className="card h-100 bg-light">
+                    <div className="card-body">
+                      <h5 className="card-title">{fruit.name}</h5>
+                      <p className="card-text">
+                        <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
+                        <strong>Seller:</strong> {fruit.seller}<br />
+                        <strong>Buyer:</strong> {fruit.buyer}
+                      </p>
+                      <span className="badge bg-secondary">Sold</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
         </section>
       </div>
