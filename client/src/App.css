@@ -1,8 +1,13 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
+  background-color: #d4edda;
   padding: 2rem;
+  border-left: 10px solid #a4c2a8;
+  border-right: 10px solid #a4c2a8;
   text-align: center;
+  box-sizing: border-box;
+  min-height: 100vh;
 }
 
 .logo {

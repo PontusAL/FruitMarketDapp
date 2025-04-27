@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { contractAddress, contractABI } from "./utils/contract";
@@ -42,9 +43,13 @@ function App() {
   };
 
   const buyFruit = async (index, price) => {
-    const tx = await contract.buyFruit(index, { value: price });
-    await tx.wait();
-    fetchFruits();
+    try {
+      const tx = await contract.buyFruit(index, { value: price });
+      await tx.wait();
+      fetchFruits();
+    } catch (error) {
+      console.error("Error buying fruit:", error);
+    }
   };
 
   useEffect(() => {
@@ -54,39 +59,97 @@ function App() {
   }, [contract]);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      {!account ? (
-        <button onClick={connectWallet}>Connect Wallet</button>
-      ) : (
-        <p>Connected: {account}</p>
-      )}
+    <div style={{ 
+      backgroundColor: "#d4edda", 
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      padding: "2rem",
+    }}>
+      <div style={{ 
+        width: "100%", 
+        maxWidth: "800px", 
+        backgroundColor: "#d4edda",
+        border: "10px solid #a4c2a8",
+        padding: "2rem",
+        borderRadius: "8px",
+      }}>
+        <header className="text-center mb-5">
+          {!account ? (
+            <button onClick={connectWallet} className="btn btn-primary">Connect Wallet</button>
+          ) : (
+            <p>Connected: {account}</p>
+          )}
+        </header>
 
-      <h2>Fruits</h2>
-      <ul>
-        {fruits.map((fruit, index) => (
-          <li key={index}>
-            {fruit.name} - {ethers.formatEther(fruit.price)} ETH
-            {fruit.buyer === "0x0000000000000000000000000000000000000000" && (
-              <button onClick={() => buyFruit(index, fruit.price)}>Buy</button>
-            )}
-          </li>
-        ))}
-      </ul>
+        <section className="mb-5">
+          <h2 className="text-center">Add a New Fruit</h2>
+          <div className="input-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Fruit Name"
+              value={newFruitName}
+              onChange={(e) => setNewFruitName(e.target.value)}
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Price (in ETH)"
+              value={newFruitPrice}
+              onChange={(e) => setNewFruitPrice(e.target.value)}
+            />
+            <button className="btn btn-primary" onClick={addFruit}>
+              Add Fruit
+            </button>
+          </div>
+        </section>
 
-      <h2>Add Fruit</h2>
-      <input
-        type="text"
-        placeholder="Name"
-        value={newFruitName}
-        onChange={(e) => setNewFruitName(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Price (in ETH)"
-        value={newFruitPrice}
-        onChange={(e) => setNewFruitPrice(e.target.value)}
-      />
-      <button onClick={addFruit}>Add Fruit</button>
+        <section>
+          <h2 className="text-center">Marketplace - Available Fruits</h2>
+          <div className="row">
+            {fruits
+              .filter(fruit => fruit.buyer === "0x0000000000000000000000000000000000000000")
+              .map((fruit, index) => (
+                <div key={index} className="col-md-6 mb-4">
+                  <div className="card h-100">
+                    <div className="card-body">
+                      <h5 className="card-title">{fruit.name}</h5>
+                      <p className="card-text">
+                        <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
+                        <strong>Seller:</strong> {fruit.seller}<br />
+                      </p>
+                      <button className="btn btn-success mt-2" onClick={() => buyFruit(index, fruit.price)}>Buy</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <h2 className="text-center mt-5">Marketplace - Sold Fruits</h2>
+          <div className="row">
+            {fruits
+              .filter(fruit => fruit.buyer !== "0x0000000000000000000000000000000000000000")
+              .map((fruit, index) => (
+                <div key={index} className="col-md-6 mb-4">
+                  <div className="card h-100 bg-light">
+                    <div className="card-body">
+                      <h5 className="card-title">{fruit.name}</h5>
+                      <p className="card-text">
+                        <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH<br />
+                        <strong>Seller:</strong> {fruit.seller}<br />
+                        <strong>Buyer:</strong> {fruit.buyer}
+                      </p>
+                      <span className="badge bg-secondary">Sold</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
