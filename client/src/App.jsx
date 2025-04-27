@@ -11,6 +11,7 @@ function App() {
   const [fruits, setFruits] = useState([]);
   const [newFruitName, setNewFruitName] = useState("");
   const [newFruitPrice, setNewFruitPrice] = useState("");
+  const [ratings, setRatings] = useState({});
 
   const connectWallet = async () => {
     if (!window.ethereum) return alert("Please install MetaMask");
@@ -49,6 +50,21 @@ function App() {
       fetchFruits();
     } catch (error) {
       console.error("Error buying fruit:", error);
+    }
+  };
+
+  const handleRateSeller = async (e, index) => {
+    e.preventDefault();
+    if (!ratings[index]) return alert("Please select a rating first.");
+  
+    try {
+      const tx = await contract.rateSeller(index, parseInt(ratings[index]));
+      await tx.wait();
+      alert("Rating submitted successfully!");
+      fetchFruits(); // refresh if needed
+    } catch (error) {
+      console.error("Error rating seller:", error);
+      alert("Failed to rate seller.");
     }
   };
 
@@ -143,6 +159,27 @@ function App() {
                         <strong>Buyer:</strong> {fruit.buyer}
                       </p>
                       <span className="badge bg-secondary">Sold</span>
+
+                      {account && account.toLowerCase() === fruit.buyer.toLowerCase() && (
+                        <form onSubmit={(e) => handleRateSeller(e, index)} className="mt-2">
+                          <div className="input-group">
+                            <select
+                              className="form-select"
+                              value={ratings[index] || ""}
+                              onChange={(e) => setRatings({ ...ratings, [index]: e.target.value })}
+                            >
+                              <option value="">Rate Seller</option>
+                              <option value="1">1 ⭐</option>
+                              <option value="2">2 ⭐⭐</option>
+                              <option value="3">3 ⭐⭐⭐</option>
+                              <option value="4">4 ⭐⭐⭐⭐</option>
+                              <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                            </select>
+                            <button className="btn btn-primary" type="submit">Submit</button>
+                          </div>
+                        </form>
+                      )}
+
                     </div>
                   </div>
                 </div>
