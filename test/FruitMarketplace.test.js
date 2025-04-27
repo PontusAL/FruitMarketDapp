@@ -7,7 +7,7 @@ describe("FruitMarketplace - Deployment", function () {
       const Factory = await ethers.getContractFactory("FruitMarketplace");
       const contract = await Factory.deploy();
   
-      // Stop forgetting; Ethers v6: uses .target instead of .address
+      // Ethers v6 uses .target instead of .address for deployed contracts.
       const address = contract.target;
   
       expect(address).to.properAddress; // Basically the same functions as the isValidUUID() I implemented in GLO-3112
@@ -78,7 +78,7 @@ describe("FruitMarketplace - buying fruit", function () {
             contract.connect(buyer).buyFruit(0, { value: ethers.parseEther("0.5") })
         ).to.be.revertedWith("Insufficient funds");
 
-        //Check that the fruit availability wasn't changed
+        // Verify that fruit remains available after failed purchase attempt.
         const fruits = await contract.getFruits();
         expect(fruits[0].buyer).to.not.equal(nullAddress);
     });

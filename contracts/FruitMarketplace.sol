@@ -32,8 +32,8 @@ contract FruitMarketplace {
     }
 
     function buyFruit(uint256 index) external payable {
-        // External since it shouldn't be able to be called internally (works like public but unables method calling from within)
-        // Using list index because I reckon it uses the least amount of computing power and there the least amount of gas.
+        // External since it shouldn't be able to be called internally (works like public but makes method calling from within not possible)
+        // Using list index because I reckon it uses the least amount of computing power and therefore the least amount of gas.
         require(index < fruits.length, "Invalid fruit index");
         Fruit storage fruit = fruits[index];
         require(fruit.buyer == address(0), "Fruit is not available");
