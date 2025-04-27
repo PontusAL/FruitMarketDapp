@@ -29,3 +29,7 @@ npx hardhat node
 ```sh
 npx hardhat run scripts/deploy.js --network localhost
 ```
+
+
+### Misc
+Remember to set metamask to localhost, otherwise nothing works lol
