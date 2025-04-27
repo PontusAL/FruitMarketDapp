@@ -58,46 +58,52 @@ function App() {
   }, [contract]);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      {!account ? (
-        <button onClick={connectWallet}>Connect Wallet</button>
-      ) : (
-        <p>Connected: {account}</p>
-      )}
+    <div style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+      <header style={{ marginBottom: "2rem", textAlign: "center" }}>
+        {!account ? (
+          <button onClick={connectWallet}>Connect Wallet</button>
+        ) : (
+          <p>Connected: {account}</p>
+        )}
+      </header>
 
-      <h2>Fruits Available</h2>
-      <ul>
-        {fruits.map((fruit, index) => (
-          <li key={index} style={{ marginBottom: "1rem" }}>
-            <strong>Name:</strong> {fruit.name} <br />
-            <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH <br />
-            <strong>Seller:</strong> {fruit.seller} <br />
-            <strong>Status:</strong>{" "}
-            {fruit.buyer === "0x0000000000000000000000000000000000000000" ? (
-              <button onClick={() => buyFruit(index, fruit.price)}>Buy</button>
-            ) : (
-              "Sold"
-            )}
-          </li>
-        ))}
-      </ul>
+      <section style={{ marginBottom: "3rem" }}>
+        <h2>Add a New Fruit</h2>
+        <input
+          type="text"
+          placeholder="Fruit Name"
+          value={newFruitName}
+          onChange={(e) => setNewFruitName(e.target.value)}
+          style={{ marginRight: "1rem", padding: "0.5rem" }}
+        />
+        <input
+          type="text"
+          placeholder="Price (in ETH)"
+          value={newFruitPrice}
+          onChange={(e) => setNewFruitPrice(e.target.value)}
+          style={{ marginRight: "1rem", padding: "0.5rem" }}
+        />
+        <button onClick={addFruit}>Add Fruit</button>
+      </section>
 
-      <h2>Add a New Fruit</h2>
-      <input
-        type="text"
-        placeholder="Fruit Name"
-        value={newFruitName}
-        onChange={(e) => setNewFruitName(e.target.value)}
-        style={{ marginRight: "1rem" }}
-      />
-      <input
-        type="text"
-        placeholder="Price (in ETH)"
-        value={newFruitPrice}
-        onChange={(e) => setNewFruitPrice(e.target.value)}
-        style={{ marginRight: "1rem" }}
-      />
-      <button onClick={addFruit}>Add Fruit</button>
+      <section>
+        <h2>Marketplace</h2>
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {fruits.map((fruit, index) => (
+            <li key={index} style={{ border: "1px solid #ccc", borderRadius: "8px", padding: "1rem", marginBottom: "1rem" }}>
+              <strong>Name:</strong> {fruit.name} <br />
+              <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH <br />
+              <strong>Seller:</strong> {fruit.seller} <br />
+              <strong>Status:</strong>{" "}
+              {fruit.buyer === "0x0000000000000000000000000000000000000000" ? (
+                <button onClick={() => buyFruit(index, fruit.price)} style={{ marginTop: "0.5rem" }}>Buy</button>
+              ) : (
+                "Sold"
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

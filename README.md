@@ -20,3 +20,12 @@ to temporarily "install" the suite of commands. This will clean, compile, run te
 
 ### Solidity reminder
 If you ever forget what you're doing. [Check this](https://www.youtube.com/watch?v=kdvVwGrV7ec&t=82s)
+
+
+### Running locally
+```sh
+npx hardhat node
+```
+```sh
+npx hardhat run scripts/deploy.js --network localhost
+```
