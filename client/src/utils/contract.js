@@ -1,4 +1,6 @@
-export const contractAddress = "YOUR_DEPLOYED_ADDRESS_HERE";
+import addresses from "./contract-address.json";
+
+export const contractAddress = addresses.FruitMarketplace;
 
 export const contractABI = [
     {

@@ -42,9 +42,13 @@ function App() {
   };
 
   const buyFruit = async (index, price) => {
-    const tx = await contract.buyFruit(index, { value: price });
-    await tx.wait();
-    fetchFruits();
+    try {
+      const tx = await contract.buyFruit(index, { value: price });
+      await tx.wait();
+      fetchFruits();
+    } catch (error) {
+      console.error("Error buying fruit:", error);
+    }
   };
 
   useEffect(() => {
@@ -61,30 +65,37 @@ function App() {
         <p>Connected: {account}</p>
       )}
 
-      <h2>Fruits</h2>
+      <h2>Fruits Available</h2>
       <ul>
         {fruits.map((fruit, index) => (
-          <li key={index}>
-            {fruit.name} - {ethers.formatEther(fruit.price)} ETH
-            {fruit.buyer === "0x0000000000000000000000000000000000000000" && (
+          <li key={index} style={{ marginBottom: "1rem" }}>
+            <strong>Name:</strong> {fruit.name} <br />
+            <strong>Price:</strong> {ethers.formatEther(fruit.price)} ETH <br />
+            <strong>Seller:</strong> {fruit.seller} <br />
+            <strong>Status:</strong>{" "}
+            {fruit.buyer === "0x0000000000000000000000000000000000000000" ? (
               <button onClick={() => buyFruit(index, fruit.price)}>Buy</button>
+            ) : (
+              "Sold"
             )}
           </li>
         ))}
       </ul>
 
-      <h2>Add Fruit</h2>
+      <h2>Add a New Fruit</h2>
       <input
         type="text"
-        placeholder="Name"
+        placeholder="Fruit Name"
         value={newFruitName}
         onChange={(e) => setNewFruitName(e.target.value)}
+        style={{ marginRight: "1rem" }}
       />
       <input
         type="text"
         placeholder="Price (in ETH)"
         value={newFruitPrice}
         onChange={(e) => setNewFruitPrice(e.target.value)}
+        style={{ marginRight: "1rem" }}
       />
       <button onClick={addFruit}>Add Fruit</button>
     </div>
